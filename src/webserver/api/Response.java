@@ -6,7 +6,6 @@ public interface Response {
 
 	void addHeader(String key, String value);
 	
-	void setContent(byte[] content);
+	void addBody(byte[] body);
 
-	void write();
 }

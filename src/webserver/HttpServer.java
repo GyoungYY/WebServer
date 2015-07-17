@@ -1,14 +1,14 @@
 package webserver;
 
+//import java.io.File;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+//import org.slf4j.*;
 
 /**
  * 一个可以访问静态页面的web服务器
@@ -30,7 +30,7 @@ public class HttpServer{
 	    ServerSocket serverSocket=null;
 	    int port=5050;
 	    try{
-		    serverSocket=new ServerSocket(port,1,InetAddress.getByName("192.168.8.28"));
+		    serverSocket=new ServerSocket(port,1,InetAddress.getByName("192.168.13.178"));
 	    }catch(IOException e){
 		    e.printStackTrace();
 		    System.exit(1);
@@ -40,8 +40,8 @@ public class HttpServer{
 		    try{
 			    //返回socket
 			    socket=serverSocket.accept();
-			    ExecutorService pool=Executors.newFixedThreadPool(30);
-			    ConnectionThread t=new ConnectionThread(socket);
+			    ExecutorService pool=Executors.newFixedThreadPool(20);
+			    Processor t=new Processor(socket);
                 t.start();
                 pool.execute(t);
 		    }catch(Exception e){
@@ -51,28 +51,6 @@ public class HttpServer{
 	    }
     }
 }
-class ConnectionThread extends Thread{
-	public Socket socket;
-    InputStream input=null;
-    OutputStream output=null;
-	public ConnectionThread(Socket Soc){
-		socket=Soc;
-	}
-	public void start(){
-		try{
-		    input=socket.getInputStream();
-		    output=socket.getOutputStream();
-		//接收请求，用于接收socket发送过来的字节流
-		    RequestImpl request=new RequestImpl(input);
-		    request.parse();
-		//处理请求并返回结果
-		    ResponseImp responseImp=new ResponseImp(output);
-		    responseImp.setRequest(request);
-		    responseImp.sendStaticResource();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-	}
-}
+
 
 
